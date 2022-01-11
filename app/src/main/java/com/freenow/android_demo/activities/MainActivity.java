@@ -1,5 +1,6 @@
 package com.freenow.android_demo.activities;
 
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -160,6 +161,7 @@ public class MainActivity extends AuthenticatedActivity
         getDeviceLocation();
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         mPermissionHelper.setLocationPermissionGranted(false);

@@ -2,14 +2,23 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
+    buildToolsVersion "28.0.2"
     defaultConfig {
         applicationId "com.freenow.android_demo"
-        minSdkVersion 15
-        targetSdkVersion 30
+        minSdkVersion 23
+        //noinspection ExpiredTargetSdkVersion
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.xsupport.test.runner.AndroidJUnitRunner"
-
+        lintOptions {
+            // use this line to check all rules except those listed
+            disable 'RuleToDisable', 'SecondRuleToDisable'
+            // use this line to check just listed rules
+            enable 'FirstRuleToCheck', 'LastRuleToCheck'
+            checkReleaseBuilds false
+            abortOnError false
+        }
     }
     buildTypes {
         release {
@@ -42,5 +51,6 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.2.0'
     implementation "com.android.support:support-annotations:28.0.0"
     annotationProcessor 'com.android.support:support-annotations:28.0.0'
+    implementation 'com.android.support:multidex:2.0.1'
 
 }
