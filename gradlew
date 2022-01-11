@@ -25,8 +25,6 @@ die ( ) {
     echo
     exit 1
 }
-before_install:
- - chmod +x gradlew
 
 # OS specific support (must be 'true' or 'false').
 cygwin=false
