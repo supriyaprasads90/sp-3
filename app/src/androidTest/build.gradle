@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
     buildToolsVersion "28.0.2"
     defaultConfig {
         applicationId "com.freenow.android_demo"
         minSdkVersion 23
         //noinspection ExpiredTargetSdkVersion
-        targetSdkVersion 28
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.xsupport.test.runner.AndroidJUnitRunner"
@@ -31,8 +31,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'com.android.support:design:28.0.0'
-    implementation 'com.android.support:cardview-v7:28.0.0'
+    implementation 'com.android.support:design:30.0.0'
+    implementation 'com.android.support:cardview-v7:30.0.0'
     implementation 'com.androidx.support.constraint:constraint-layout:1.1.2'
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
     implementation 'com.google.android.gms:play-services-places:15.0.1'
@@ -49,8 +49,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
-    implementation "com.android.support:support-annotations:28.0.0"
-    annotationProcessor 'com.android.support:support-annotations:28.0.0'
+    implementation "com.android.support:support-annotations:30.0.0"
+    annotationProcessor 'com.android.support:support-annotations:30.0.0'
     implementation 'com.android.support:multidex:2.0.1'
 
 }
