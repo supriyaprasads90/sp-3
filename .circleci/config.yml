@@ -21,21 +21,57 @@ jobs:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
-          name: Setup emulator
-          command: sdkmanager "system-images;android-30;google_apis_playstore;x86_64" &&echo "no" | avdmanager create avd -n emulator30 -k "system-images;android-30;google_apis;x86_64" -g "google_apis"
+          name: Create avd
+          command: |
+            SYSTEM_IMAGES="system-images;android-29;default;x86"
+            sdkmanager "$SYSTEM_IMAGES"
+            echo "no" | avdmanager --verbose create avd -n test -k "$SYSTEM_IMAGES"
       - run:
           name: Launch emulator
-          command: export LD_LIBRARY_PATH=${ANDROID_HOME}/emulator/lib64:${ANDROID_HOME}/emulator/lib64/qt/lib && emulator64-arm -avd test -noaudio -no-boot-anim -no-window -accel auto -verbose
-          background: true
-
-      - run:
-          name: Wait emulator
           command: |
-            # wait for it to have booted
-            circle-android wait-for-boot
-            # unlock the emulator screen
-            sleep 30
-            adb shell input keyevent 82
+            emulator -avd test -delay-adb -verbose -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          background: true
+      - restore_cache:
+          key: gradle-v1-{{ arch }}-{{ checksum "/tmp/gradle_cache_seed" }}
+            - run:
+                # run in parallel with the emulator starting up, to optimize build time
+                name: Run assembleDebugAndroidTest task
+                command: |
+                  ./gradlew assembleDebugAndroidTest
+            - run:
+                name: Wait for emulator to start
+                command: |
+                  circle-android wait-for-boot
+            - run:
+                name: Disable emulator animations
+                command: |
+                  adb shell settings put global window_animation_scale 0.0
+                  adb shell settings put global transition_animation_scale 0.0
+                  adb shell settings put global animator_duration_scale 0.0
+            - run:
+                name: Run UI tests (with retry)
+                command: |
+                  MAX_TRIES=2
+                  run_with_retry() {
+                     n=1
+                     until [ $n -gt $MAX_TRIES ]
+                     do
+                        echo "Starting test attempt $n"
+                        ./gradlew connectedDebugAndroidTest && break
+                        n=$[$n+1]
+                        sleep 5
+                     done
+                     if [ $n -gt $MAX_TRIES ]; then
+                       echo "Max tries reached ($MAX_TRIES)"
+                       exit 1
+                     fi
+                  }
+                  run_with_retry
+            - save_cache:
+                key: gradle-v1-{{ arch }}-{{ checksum "/tmp/gradle_cache_seed" }}
+                paths:
+                  - ~/.gradle/caches
+                  - ~/.gradle/wrapper
       - run:
           name: Run EspressoTests
           command: ./gradlew connectedAndroidTest
