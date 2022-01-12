@@ -39,22 +39,22 @@ jobs:
             shasum | awk '{print $1}' > /tmp/gradle_cache_seed
       - restore_cache:
           key: gradle-v1-{{ arch }}-{{ checksum "/tmp/gradle_cache_seed" }}
-        - run:
+      - run:
           # run in parallel with the emulator starting up, to optimize build time
           name: Run assembleDebugAndroidTest task
-          command: |
-          ./gradlew assembleDebugAndroidTest
-        - run:
+          command: | 
+           ./gradlew assembleDebugAndroidTest
+      - run:
           name: Wait for emulator to start
           command: |
             circle-android wait-for-boot
-        - run:
+      - run:
           name: Disable emulator animations
           command: |
             adb shell settings put global window_animation_scale 0.0
             adb shell settings put global transition_animation_scale 0.0
             adb shell settings put global animator_duration_scale 0.0
-        - run:
+      - run:
           name: Run UI tests (with retry)
           command: |
                   MAX_TRIES=2
@@ -73,7 +73,7 @@ jobs:
                      fi
                   }
                   run_with_retry
-        - save_cache:
+      - save_cache:
                 key: gradle-v1-{{ arch }}-{{ checksum "/tmp/gradle_cache_seed" }}
                 paths:
                   - ~/.gradle/caches
