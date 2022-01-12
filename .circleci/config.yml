@@ -33,6 +33,12 @@ jobs:
             er_indirect -no-snapshot -noaudio -no-boot-anim
           background: true
       - run:
+          name: Launch emulator
+          command: |
+             export LD_LIBRARY_PATH=${ANDROID_HOME}/emulator/lib64:${ANDROID_HOME}/emulator/lib64/qt/lib &&
+             emulator64-arm -avd test -noaudio -no-boot-anim -no-window -accel on
+          background: true
+      - run:
           name: Generate cache key
           command: |
             find . -name 'build.gradle' | sort | xargs cat |
