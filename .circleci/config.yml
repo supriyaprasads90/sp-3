@@ -2,27 +2,33 @@
 version: 2.1
 jobs:
   build:
+    working_directory: ~/code
+    docker:
+        # Android the primary container
+          - image: circleci/android:api-30
+    environment:
+        JVM_OPTS: -Xmx3200m
     machine:
       image: android:202102-01
     # To optimize build times, we recommend "large" and above for Android-related jobs
     resource_class: large
     steps:
       - run:
-                name: chmod permissions
-                command: chmod +x ./gradlew
+          name: chmod permissions
+          command: chmod +x ./gradlew
       - run:
-                name: Download Dependencies
-                command:  |
-                   sudo chmod +x gradlew
-                   ./gradlew androidDependencies
+          name: Download Dependencies
+          command:  |
+            sudo chmod +x gradlew
+            ./gradlew androidDependencies
       - save_cache:
-                paths:
-                  - ~/.gradle
-                key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
       - run:
           name: Create avd
           command: |
-            SYSTEM_IMAGES="system-images;android-29;default;x86"
+            SYSTEM_IMAGES="system-images;android-30;default;x86"
             sdkmanager "$SYSTEM_IMAGES"
             echo "no" | avdmanager --verbose create avd -n test -k "$SYSTEM_IMAGES"
       - run:
@@ -70,22 +76,17 @@ jobs:
                  exit 1
                fi
             }
-            run_with_retry 
+            run_with_retry
       - save_cache:
           key: gradle-v1-{{ arch }}-{{ checksum "/tmp/gradle_cache_seed" }}
           paths:
             - ~/.gradle/caches
             - ~/.gradle/wrapper
       - run:
-                name: Run Tests
-                command: ./gradlew lint test
+          name: Run Tests
+          command: ./gradlew lint test
       - store_artifacts:
-                path: app/build/reports
-                destination: reports
+          path: app/build/reports
+          destination: reports
       - store_test_results:
-                path: app/build/test-results
-
- 
-           
-
-        
+          path: app/build/test-results
