@@ -20,9 +20,6 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-      - run:
-      name: android/android-machine
-      resource-class: large
       - run : Launch emulator
       - checkout
       # Create an AVD named "myavd"
