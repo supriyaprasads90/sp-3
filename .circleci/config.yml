@@ -23,7 +23,7 @@ jobs:
       - run:
       name: android/android-machine
       resource-class: large
-      - run :
+      - run : Launch emulator
       - checkout
       # Create an AVD named "myavd"
       - android/create-avd:
