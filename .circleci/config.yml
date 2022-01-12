@@ -23,10 +23,10 @@ jobs:
           name: Setup emulator
           command: sdkmanager "system-images;android-30;google_apis;x86" && echo "no" | avdmanager create avd -n test -k "system-images;android-30;google_apis;x86"
       - run:
-          name: Run Emulator
-            background: true
-            command: |
-              $ANDROID_SDK_ROOT/tools/emulator -no-window -noaudio -no-boot-anim -gpu swiftshader @androidlearn
+          name: Launch Emulator
+          command: |
+            emulator -avd test -delay-adb -verbose -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          background: true
       - run:
           name: Wait emulator
           command: |
