@@ -9,4 +9,4 @@ workflows:
       - android/run-ui-tests:
           # Use pre-steps and post-steps if necessary
           # to execute custom steps before and afer any of the built-in steps
-          system-image: system-images;android-30;google_apis_playstore;x86_64
+          system-image: system-images;android-30;google_apis;x86_64
