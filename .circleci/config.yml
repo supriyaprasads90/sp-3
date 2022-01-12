@@ -7,31 +7,20 @@ jobs:
     # To optimize build times, we recommend "large" and above for Android-related jobs
     resource_class: large
     steps:
-      - checkout
-    - restore_cache:
-    key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
       - run:
                 name: chmod permissions
                 command: chmod +x ./gradlew
-            - run:
+      - run:
                 name: Download Dependencies
                 command: ./gradlew androidDependencies
-            - save_cache:
+      - save_cache:
                 paths:
                   - ~/.gradle
                 key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
-            - run:
-                name: Run Tests
-                command: ./gradlew lint test
-            - store_artifacts:
-                path: app/build/reports
-                destination: reports
-            - store_test_results:
-                path: app/build/test-results
       - run:
           name: Create avd
           command: |
-            SYSTEM_IMAGES="system-images;android-30;default;x86"
+            SYSTEM_IMAGES="system-images;android-29;default;x86"
             sdkmanager "$SYSTEM_IMAGES"
             echo "no" | avdmanager --verbose create avd -n test -k "$SYSTEM_IMAGES"
       - run:
@@ -85,7 +74,16 @@ jobs:
           paths:
             - ~/.gradle/caches
             - ~/.gradle/wrapper
-workflows:
-  build:
-    jobs:
-      - build
+      - run:
+                name: Run Tests
+                command: ./gradlew lint test
+      - store_artifacts:
+                path: app/build/reports
+                destination: reports
+      - store_test_results:
+                path: app/build/test-results
+
+ 
+           
+
+        
