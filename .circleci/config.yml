@@ -23,9 +23,7 @@ jobs:
       - run:
           name: Create avd
           command: |
-            SYSTEM_IMAGES="system-images;android-29;default;x86"
-            sdkmanager "$SYSTEM_IMAGES"
-            echo "no" | avdmanager --verbose create avd -n test -k "$SYSTEM_IMAGES"
+            sdkmanager "system-images;android-30;default;armeabi-v7a" && echo "no" | avdmanager create avd -n test -k "system-images;android-30;default;armeabi-v7a"
       - run:
           name: Launch emulator
           command: |
