@@ -24,8 +24,8 @@ jobs:
           command: sdkmanager "system-images;android-30;google_apis;x86" && echo "no" | avdmanager create avd -n test -k "system-images;android-30;google_apis;x86"
       - run:
           name: Launch Emulator
-            command: |
-              LD_LIBRARY_PATH=${ANDROID_HOME}/tools/lib64:${ANDROID_HOME}/emulator/lib64:${ANDROID_HOME}/emulator/lib64/qt/lib
+          command: |
+            LD_LIBRARY_PATH=${ANDROID_HOME}/tools/lib64:${ANDROID_HOME}/emulator/lib64:${ANDROID_HOME}/emulator/lib64/qt/lib
               sudo apt-get install libpulse-dev -y
               ${ANDROID_HOME}/emulator/emulator -avd test -memory 500 -no-window -noaudio -no-boot-anim -no-window -accel on -gpu off
             background: true
