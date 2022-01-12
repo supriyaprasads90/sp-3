@@ -6,6 +6,7 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
@@ -49,87 +50,40 @@ public class MainActivityTest {
                     "android.permission.ACCESS_FINE_LOCATION");
 
     @Test
-    public void mainActivityTest() {
-        ViewInteraction appCompatEditText = onView(
-                allOf(withId(R.id.edt_username),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
-                                        0),
-                                0),
-                        isDisplayed()));
-        appCompatEditText.perform(replaceText("crazydog335"), closeSoftKeyboard());
+    //Verify Login is successfull with correct username and password
 
-        ViewInteraction appCompatEditText2 = onView(
-                allOf(withId(R.id.edt_password),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
-                                        0),
-                                0),
-                        isDisplayed()));
-        appCompatEditText2.perform(replaceText("venture"), closeSoftKeyboard());
+    public void VerifySuccessfullLogin() {
+        try {
+            onView(withId(R.id.edt_username)).check(matches(isDisplayed()));
+            onView(withId(R.id.edt_username))
+                    .perform(typeText("crazydog335"), closeSoftKeyboard());
+            onView(withId(R.id.edt_password)).check(matches(isDisplayed()));
+            onView(withId(R.id.edt_password))
+                    .perform(typeText("venture"), closeSoftKeyboard());
 
-        ViewInteraction appCompatButton = onView(
-                allOf(withId(R.id.btn_login), withText("Login"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                2),
-                        isDisplayed()));
-        appCompatButton.perform(click());
+            onView(withId(R.id.btn_login)).check(matches(isDisplayed()));
+            onView(withId(R.id.btn_login)).perform(click());
 
-        ViewInteraction appCompatAutoCompleteTextView = onView(
-                allOf(withId(R.id.textSearch),
-                        childAtPosition(
-                                allOf(withId(R.id.searchContainer),
-                                        childAtPosition(
-                                                withClassName(is("androidx.coordinatorlayout.widget.CoordinatorLayout")),
-                                                1)),
-                                0),
-                        isDisplayed()));
-        appCompatAutoCompleteTextView.perform(replaceText("sa"), closeSoftKeyboard());
+            onView(withId(R.id.textSearch))
+                    .wait(5000);
+            onView(withId(R.id.textSearch)).perform(typeText("sa"), closeSoftKeyboard());
 
-        DataInteraction appCompatTextView = onData(anything())
-                .inAdapterView(childAtPosition(
-                        withClassName(is("android.widget.PopupWindow$PopupBackgroundView")),
-                        0))
-                .atPosition(1);
-        appCompatTextView.perform(click());
 
-        ViewInteraction floatingActionButton = onView(
-                allOf(withId(R.id.fab),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                2),
-                        isDisplayed()));
-        floatingActionButton.perform(click());
+            DataInteraction appCompatTextView = onData(anything())
+                    .inAdapterView(withText(is("Samantha Reed")));
+            appCompatTextView.perform(click());
 
-        ViewInteraction viewGroup = onView(
-                allOf(withParent(withParent(withId(android.R.id.content))),
-                        isDisplayed()));
-        viewGroup.check(matches(isDisplayed()));
-    }
+            onView(withId(R.id.fab)).check(matches(isDisplayed()));
+            onView(withId(R.id.fab)).perform(click());
 
-    private static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
-
-        return new TypeSafeMatcher<View>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Child at position " + position + " in parent ");
-                parentMatcher.describeTo(description);
-            }
-
-            @Override
-            public boolean matchesSafely(View view) {
-                ViewParent parent = view.getParent();
-                return parent instanceof ViewGroup && parentMatcher.matches(parent)
-                        && view.equals(((ViewGroup) parent).getChildAt(position));
-            }
-        };
+            ViewInteraction viewGroup = onView(
+                    allOf(withParent(withParent(withId(android.R.id.content))),
+                            isDisplayed()));
+            viewGroup.check(matches(isDisplayed()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
+
+
