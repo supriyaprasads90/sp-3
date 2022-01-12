@@ -54,7 +54,7 @@ public class MainActivityTest3 {
         try {
             onView(withId(R.id.edt_username)).check(matches(isDisplayed()));
             onView(withId(R.id.edt_username))
-                    .perform(typeText("crazydog335"), closeSoftKeyboard());
+                    .perform(typeText("crazydog3315"), closeSoftKeyboard());
             onView(withId(R.id.edt_password)).check(matches(isDisplayed()));
             onView(withId(R.id.edt_password))
                     .perform(typeText("venture"), closeSoftKeyboard());
