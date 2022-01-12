@@ -1,50 +1,38 @@
-# .circleci/config.yml
-version: 2.1
-orbs:
-  android: circleci/android@30
-  environment:
-    JVM_OPTS: -Xmx3200m
+version: 2
 jobs:
-  test:
-    executor:
-      name: android/android-machine
-      resource-class: large
+  build:
+    working_directory: ~/code
+    docker:
+      # Android the primary container
+      - image: circleci/android:api-30
+    environment:
+      JVM_OPTS: -Xmx3200m
     steps:
       - checkout
       - restore_cache:
-      key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-      - run:
-         name: Download Dependencies
-          command: |
-          sudo chmod +x gradlew
-          ./gradlew androidDependencies
-          - save_cache:
-          paths:
-           - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-      # Create an AVD named "myavd"
-      - android/create-avd:
-          avd-name: myavd
-          system-image: system-images;android-30;default;x86
-          install: true
-      # By default, after starting up the emulator, a cache will be restored,
-      # "./gradlew assembleDebugAndroidTest" will be run and then a script
-      # will be run to wait for the emulator to start up.
-      # Specify the "post-emulator-launch-assemble-command" command to override
-      # the gradle command run, or set "wait-for-emulator" to false to disable
-      # waiting for the emulator altogether.
-      - android/start-emulator:
-          avd-name: myavd
-          no-window: true
-          restore-gradle-cache-prefix: v1a
-      # Runs "./gradlew connectedDebugAndroidTest" by default.
-      # Specify the "test-command" parameter to customize the command run.
-      - android/run-tests
-      - android/save-gradle-cache:
-          cache-prefix: v1a
-workflows:
-  test:
-    jobs:
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - run:
+          name: Setup emulator
+          command: sdkmanager "system-images;android-30;default;armeabi-v7a" && echo "no" | avdmanager create avd -n test -k "system-images;android-23;default;armeabi-v7a"
+      - run:
+          name: Launch emulator
+          command: export LD_LIBRARY_PATH=${ANDROID_HOME}/emulator/lib64:${ANDROID_HOME}/emulator/lib64/qt/lib && emulator64-arm -avd test -noaudio -no-boot-anim -no-window -accel auto -verbose
+          background: true
+      - run:
+          name: Wait emulator
+          command: |
+            # wait for it to have booted
+            circle-android wait-for-boot
+            # unlock the emulator screen
+            sleep 30
+            adb shell input keyevent 82
       - run:
           name: Run EspressoTests
           command: ./gradlew connectedAndroidTest
