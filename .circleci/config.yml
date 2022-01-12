@@ -11,7 +11,7 @@ jobs:
       - run:
           name: Create avd
           command: |
-            SYSTEM_IMAGES="sdkmanager "system-images;android-30;google_apis;x86_64""
+            SYSTEM_IMAGES="system-images;android-30;google_apis_playstore;x86_64"
             sdkmanager "$SYSTEM_IMAGES"
             echo "no" | avdmanager --verbose create avd -n test -k "$SYSTEM_IMAGES"
       - run:
