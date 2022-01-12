@@ -20,8 +20,11 @@ jobs:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
-          name: Setup emulator
-          command: sdkmanager "system-images;android-30;google_apis;x86" && echo "no" | avdmanager create avd -n test -k "system-images;android-30;google_apis;x86"
+          name: Create avd
+          command: |
+            SYSTEM_IMAGES="system-images;android-30;default;x86"
+            sdkmanager "$SYSTEM_IMAGES"
+            echo "no" | avdmanager --verbose create avd -n test -k "$SYSTEM_IMAGES"
       - run:
           name: Launch Emulator
           command: |
